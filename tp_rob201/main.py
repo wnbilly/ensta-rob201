@@ -11,7 +11,7 @@ from robot import MyRobot
 from worlds.my_world import MyWorld
 
 import random
-    
+
 if __name__ == '__main__':
     lidar_params = LidarParams()
     lidar_params.noise_enable = True
@@ -30,6 +30,7 @@ if __name__ == '__main__':
     my_world = MyWorld(robot=my_robot)
     simulator = Simulator(the_world=my_world,
                           use_keyboard=False,
-                          draw_lidar=True)
-    
+                          draw_lidar=True,
+                          use_mouse_measure=True)
+
     simulator.run()
