@@ -8,6 +8,7 @@ from control import reactive_obst_avoid
 from control import wall_follow
 from control import potential_field_control
 
+from tiny_slam import TinySlam
 
 class MyRobot(RobotAbstract):
     """A robot controller including SLAM, path planning and path following"""

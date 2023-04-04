@@ -45,9 +45,10 @@ class MyRobotSlam(RobotAbstract):
         """
         self.counter += 1
 
-        self.tiny_slam.compute()
-
         # Compute new command speed to perform obstacle avoidance
         command = reactive_obst_avoid(self.lidar())
+
+        # Update occupancy grid map
+        self.tiny_slam.update_map(self.lidar(), self.odometer_values())
 
         return command

@@ -49,8 +49,8 @@ class TinySlam:
         Convert from map coordinates to world coordinates
         x_map, y_map : list of x and y coordinates in cell numbers (~pixels)
         """
-        x_world = self.x_min_world + x_map *  self.resolution
-        y_world = self.y_min_world + y_map *  self.resolution
+        x_world = self.x_min_world + x_map * self.resolution
+        y_world = self.y_min_world + y_map * self.resolution
 
         if isinstance(x_world, np.ndarray):
             x_world = x_world.astype(float)
@@ -121,7 +121,6 @@ class TinySlam:
 
         self.occupancy_map[x_px, y_px] += val
 
-
     def score(self, lidar, pose):
         """
         Computes the sum of log probabilities of laser end points in the map
@@ -165,7 +164,26 @@ class TinySlam:
         lidar : placebot object with lidar data
         pose : [x, y, theta] nparray, corrected pose in world coordinates
         """
-        # TODO for TP3
+        # TP3
+        # Parameters
+        occ_pt_prob = 0.99
+        occ_prob = np.log(occ_pt_prob/(1-occ_pt_prob))
+        empty_pt_prob = 0.2
+        empty_prob = np.log(empty_pt_prob/(1-empty_pt_prob))
+
+        # Conversion polar to local
+        lidar_cartesian = np.zeros((2, lidar.get_sensor_values().shape[0]))
+        lidar_cartesian[0] = pose[0] + np.cos(
+            lidar.get_ray_angles() + pose[2]) * lidar.get_sensor_values()
+        lidar_cartesian[1] = pose[1] + np.sin(
+            lidar.get_ray_angles() + pose[2]) * lidar.get_sensor_values()
+
+        # Map update
+        for i in range(lidar_cartesian.shape[1]):
+            self.add_map_line(pose[0], pose[1], lidar_cartesian[0][i], lidar_cartesian[1][i],
+                             empty_prob)
+        self.add_map_points(lidar_cartesian[0], lidar_cartesian[1], occ_prob)
+
 
 
     def plan(self, start, goal):
@@ -253,17 +271,3 @@ class TinySlam:
         filename : base name (without extension) of file on disk
         """
         # TODO
-
-    def compute(self):
-        """ Useless function, just for the exercise on using the profiler """
-        # Remove after TP1
-
-        ranges = np.random.rand(3600)
-        ray_angles = np.arange(-np.pi,np.pi,np.pi/1800)
-
-        # Poor implementation of polar to cartesian conversion
-        points = []
-        for i in range(3600):
-            pt_x = ranges[i] * np.cos(ray_angles[i])
-            pt_y = ranges[i] * np.sin(ray_angles[i])
-            points.append([pt_x,pt_y])

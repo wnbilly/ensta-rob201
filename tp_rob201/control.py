@@ -78,6 +78,7 @@ def wall_follow(lidar):  # TODO finish it
     return command
 
 
+
 def potential_field_control(lidar, pose, goal):
     """
     Control using potential field for goal reaching and obstacle avoidance
