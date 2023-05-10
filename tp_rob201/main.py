@@ -1,17 +1,14 @@
 """ A simple SLAM demonstration using the "placebot" robot simulator """
 
+import sys
+
 from place_bot.entities.lidar import LidarParams
 from place_bot.entities.odometer import OdometerParams
 from place_bot.simu_world.simulator import Simulator
 
 from my_robot_slam import MyRobotSlam
-from tiny_slam import TinySlam
 from robot import MyRobot
-
 from worlds.my_world import MyWorld
-
-import numpy as np
-import random
 
 if __name__ == '__main__':
     lidar_params = LidarParams()
@@ -27,7 +24,11 @@ if __name__ == '__main__':
     # odometer_params.param3 = 0.04  # 0.04 # degree/meter, influence of translation to rotation
     # odometer_params.param4 = 0.01  # 0.01 # degree/degree, influence of rotation to rotation
 
-    my_robot = MyRobotSlam(lidar_params=lidar_params, odometer_params=odometer_params)
+    USE_SLAM = int(sys.argv[1]) if len(sys.argv) > 1 else 1
+    print(f"To use SLAM, add 1 as argument, 0 otherwise. Using SLAM: {USE_SLAM}")
+
+    my_robot = MyRobotSlam(lidar_params=lidar_params, odometer_params=odometer_params) if USE_SLAM else MyRobot(
+        lidar_params=lidar_params, odometer_params=odometer_params)
     my_world = MyWorld(robot=my_robot)
     simulator = Simulator(the_world=my_world,
                           use_keyboard=False,
@@ -36,5 +37,5 @@ if __name__ == '__main__':
 
     simulator.run()
 
-    my_robot.tiny_slam.save('map')
-    my_robot.tiny_slam.display(my_robot.odometer_values())
+    if USE_SLAM:
+        my_robot.tiny_slam.display(my_robot.corrected_pose)

@@ -33,12 +33,12 @@ class MyRobot(RobotAbstract):
         """
 
         # Compute new command speed to perform obstacle avoidance
-        #  command = reactive_obst_avoid(self.lidar())
+        # command = reactive_obst_avoid(self.lidar())
         # command = wall_follow((self.lidar()))
 
-        #  goal = np.array([240, 20, 0]) # Unreachable with potential
-        # goal = np.array([370, -260, 0]) # Simple goal w/out walls to avoid
-        goal = np.array([240, 220, 0])  # Reachable via the closest door to the spawn point
+        # goal = np.array([240, 20, 0]) # Unreachable with potential
+        goal = np.array([370, -260, 0]) # Simple goal w/out walls to avoid
+        # goal = np.array([240, 220, 0])  # Reachable via the closest door to the spawn point
         pose = np.array([self.position[0], self.position[1], self.angle])
         command = potential_field_control(self.lidar(), pose, goal)
 

@@ -83,17 +83,16 @@ def potential_field_control(lidar, pose, goal):
     """
     Control using potential field for goal reaching and obstacle avoidance
     lidar : placebot object with lidar data
-    pose : [x, y, theta] nparray, current pose in odom or world frame
-    goal : [x, y, theta] nparray, target pose in odom or world frame
+    pose : [x, y, theta] nparray
+    goal : [x, y, theta] nparray
     """
-
     # Params
     K_goal = 1  # Gain du gradient attractif
     K_ang = 0.4  # Gain en vitesse angulaire
     K_vit = 0.2  # Gain en vitesse linéaire
-    d_min = 50  # Distance au goal de transition entre gradient conique et quadratique
+    d_min = 40  # Distance au goal de transition entre gradient conique et quadratique
     d_stop = 20  # Distance au goal pour arrêt
-    v_max = 0.4  # Doit être <= 1
+    v_max = 0.3  # Doit être <= 1
 
     K_obs = 10 ** 4.5  # Gain du potentiel répulsif
     d_safe = 30  # Distance à l'obstacle à partir de laquelle le potentiel répulsif est nul
@@ -102,7 +101,7 @@ def potential_field_control(lidar, pose, goal):
     # Cela permet notamment au robot de tourner du côté le plus rapide pour atteindre angle_goal lorsqu'il a atteint son goal en x et y mais pas en theta
     pose[2] = math.atan2(math.sin(pose[2]), math.cos(pose[2]))
     # Distance de pose à goal
-    d_goal = np.linalg.norm(goal[:-1] - pose[:-1])
+    d_goal = np.linalg.norm(goal[:2] - pose[:2])
 
     # Condition d'arrêt à proximité de l'objectif
     if d_goal < d_stop:
